@@ -1,9 +1,11 @@
 from langchain_community.chat_models import ChatTongyi
 from langchain_core.messages import SystemMessage, HumanMessage
+from langchain_openai import ChatOpenAI
 
 # 1.创建模型客户端
-llm = ChatTongyi(
-    model="qwen3-max",
+llm = ChatOpenAI(
+    model="qwen3.8-max",
+    base_url="https://llm-59ddchtzu57pyk9x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
     streaming=True # 看版本！
 )
 
