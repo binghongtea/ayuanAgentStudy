@@ -1,30 +1,35 @@
-from langchain_community.chat_models import ChatTongyi
-from langchain_community.llms.tongyi import Tongyi
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_openai import ChatOpenAI
+from yaml import full_load
 
+# 1. 创建对话提示词模板
+# 用用简写模式可以识别占位符，SystemMessage这种不能识别占位符
 chat_prompt_template = ChatPromptTemplate.from_messages([
-    ("system", "假设你一个AI专家"),
+    ('system','假设你是一个{export}专家'),
     MessagesPlaceholder("history"),
-    ("human", "我刚才问了什么内容")
+    ('human','前一个问题我问了什么？')
 ])
 
+# 2. 消息列表
+
 chat_history = [
-    ("human", "什么是Langgraph"),
-    ("ai", "LangGraph是一种结合了自然语言处理（NLP）和图数据库技术的框架或方法论，旨在通过将文本信息转化为结构化的图数据来提高对复杂文本的理解与分析能力。")
+    ('human','LangGraph是什么？'),
+    ('ai','LangGraph是一种状态管理框架，三个核心是State,Node,Edge')
 ]
+print(chat_prompt_template.invoke({'export':'ai','content':'LangGraph','history':chat_history}).to_string())
+# 3. 创建模型客户端
 
-# result = chat_prompt_template.format(history=chat_history)
-# print(type(result))
-# print(result)
-# print(chat_prompt_template.invoke(input={"history": chat_history}).to_string())
-#
-# llm = Tongyi(model="qwen-max") # todo: coding fixed
-# # llm = ChatTongyi(model="qwen3-max", streaming=True)
-# chain = chat_prompt_template | llm
-# result = chain.stream(input={"history": chat_history})
-# for chunk in result:
-#     # print(chunk.content, end='', flush=True)
-#     print(chunk, end='', flush=True)
+llm = ChatOpenAI(model="qwen3.8-max",base_url="https://llm-59ddchtzu57pyk9x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1")
 
+# 4. 组装成LCEL表达式
 
+chain = chat_prompt_template | llm
 
+# 5. 调用模型
+
+stream = chain.stream({'export':'ai','content':'LangGraph','history':chat_history})
+
+# 6.处理输出
+
+for chunk in stream:
+    print(chunk.content,end='',flush=True)

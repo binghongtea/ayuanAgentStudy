@@ -1,69 +1,42 @@
-from langchain_community.llms.tongyi import Tongyi
+#少样本提示词模板 fewshotTemplate
 from langchain_core.prompts import PromptTemplate, FewShotPromptTemplate
+from langchain_openai import ChatOpenAI
 
-# 1.准备示例数据
+# 1.定义示例
 examples = [
-    {"input": "高兴", "output": "愉悦"},
-    {"input": "快速", "output": "迅猛"},
-    {"input": "美丽", "output": "绚丽"}
+    {'input': '美丽', 'output': '漂亮'},
+    {'input': '舒服', 'output': '巴适'},
 ]
 
-# 2.构建提示词模板
-example_prompt = PromptTemplate.from_template(
-    "输入：{input}\n输出：{output}"
-)
+# 2.定义实例格式化模板
+example_prompt = PromptTemplate.from_template("输出：{input},输出{output}")
 
-# 3.创建 FewShotPromptTemplate
-few_shot_prompt = FewShotPromptTemplate(
+# 3.创建少样本提示词模板
+
+few_shot_template = FewShotPromptTemplate(
     examples=examples,
     example_prompt=example_prompt,
-    prefix="请根据以下示例，将输入词语转换为同义词",
-    suffix="基于示例回答问题。用户输入：{word}\n输出：",
+    prefix="请参考以下格式，输出相应的值。",
+    suffix="请直接输出答案。用户输入为{word}，输出：",
     input_variables=["word"]
 )
 
-# 4.调用
-# prompt_text = few_shot_prompt.format(word="悲伤")
-# prompt_text = few_shot_prompt.invoke(input={"word": "悲伤"}) # StringPromptValue
-# print(type(prompt_text))
-# print(prompt_text.text)
-# print(prompt_text.to_string())
-# llm = Tongyi(model="qwen-max")
-# # result = llm.invoke(input=prompt_text)
-# # print(result)
-# chain = few_shot_prompt | llm
-# print(chain.invoke(input={"word": "悲伤"}))
+prompt_template = few_shot_template.format(word="晴朗")
+print(prompt_template)
+prompt_template = few_shot_template.invoke(input={'word' : "晴朗"})
+print(prompt_template)
+print(prompt_template.text)
+print(prompt_template.to_string())
 
+# 4.创建模型客户端
 
+llm = ChatOpenAI(model='qwen3.8-max',base_url="https://llm-59ddchtzu57pyk9x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1")
 
+# 5.LCEL表达式
+chain = few_shot_template | llm
 
+# 6.调用模型
 
+result = chain.invoke(input={"word":"晴朗"})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(result.content)

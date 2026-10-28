@@ -1,17 +1,10 @@
-from langchain_community.llms.tongyi import Tongyi
+from langchain_openai import ChatOpenAI
 
-# 1.创建模型的客户端
-llm = Tongyi(model="qwen-max")
+llm = ChatOpenAI(model='qwen3.8-max',base_url='https://llm-59ddchtzu57pyk9x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1')
 
-# 2.调用模型
-# 2.1. 用户直接提问
-# user_query = "假设你是一个AI专家，请你解释一下Langchain是什么。"
-# 2.2. 支持占位符注入
-user_query = "假设你是一个{expert}专家，请你解释一下{content}是什么。".format(expert="AI", content="Langgraph")
-print(type(user_query))
-print(user_query)
-# result = llm.stream(input=user_query)
-#
-# # 3.处理输出
-# for chunk in result:
-#     print(chunk, end='', flush=True)
+user_input = "假如你是一个{export},请你对{thing}进行解析。".format(export = 'ai专家',thing="langgragh")
+print(user_input)
+stream = llm.stream(input=user_input)
+
+for chunk in stream:
+    print(chunk.content,end="",flush=True)

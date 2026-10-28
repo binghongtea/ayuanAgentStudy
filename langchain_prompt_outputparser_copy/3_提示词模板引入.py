@@ -1,18 +1,16 @@
-from langchain_community.llms.tongyi import Tongyi
 from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
 
-# 1.创建模型的客户端
-llm = Tongyi(model="qwen-max")
+llm = ChatOpenAI(model="qwen3.8-max",base_url="https://llm-59ddchtzu57pyk9x.cn-beijing.maas.aliyuncs.com/compatible-mode/v1")
 
-# 2.调用模型
 prompt_template = PromptTemplate.from_template(
-    "假设你是一个{expert}专家，请你解释一下{content}是什么。"
+    "假如你是一个{export},请你对{thing}是什么。"
 )
-prompt = prompt_template.format(expert="AI", content="Langgraph")
-# print(type(prompt))
-# print(prompt)
-result = llm.stream(input=prompt)
 
-# 3.处理输出
-for chunk in result:
-    print(chunk, end='', flush=True)
+user_input = prompt_template.format(export="ai专家",thing="langgragh")
+print(user_input)
+print(type(user_input))
+stream = llm.stream(input=user_input)
+
+for chunk in stream:
+    print(chunk.content,end="",flush=True)

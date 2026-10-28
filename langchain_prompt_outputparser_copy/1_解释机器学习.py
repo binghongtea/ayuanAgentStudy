@@ -1,21 +1,19 @@
-from langchain_community.llms.tongyi import Tongyi
+from langchain_community.llms import Tongyi
 
-# 1.创建模型客户端
 llm = Tongyi(model="qwen-max")
 
-# 2. 调用模型
-# user_query_1 = "请简单介绍机器学习"
-user_query_2 = """
-请从以下几个方面介绍机器学习：
-1. 定义（一句话概括）
-2. 三大分类（监督学习、无监督学习、强化学习）
-3. 一个生活化的例子
-4. 与深度学习的区别（用表格呈现）
+stream = llm.stream(input="""1. 用大白话解释什么是机器学习，举2个简单例子，不要太学术。
+2. 讲清楚人工智能、机器学习、深度学习三者的包含关系。
+3. 对比传统编程和机器学习的不同思路，用流程图逻辑描述。
+4. 分别解释监督学习、无监督学习、强化学习，每个都给定义+场景例子。
+5. 通俗解释样本、特征、标签、数据集这几个基础术语。
+6. 机器学习完整工程流程有哪些步骤，一步步说明。
+7. 什么是欠拟合、过拟合？原因、现象、怎么解决。
+8. 解释embedding嵌入、向量、向量相似度，和机器学习的关联。
+9. 生成一段1分钟左右口述答案：什么是机器学习，用于技术面试回答。
+10. 说明大语言模型LLM属于机器学习里哪一类，二者的关系。
+11. 出3道单选+1道简答，机器学习基础概念练习题，附上答案。
+""")
 
-要求：语言通俗，适合零基础初学者
-"""
-result = llm.stream(input=user_query_2)
-
-# 处理输出
-for chunk in result:
-    print(chunk, end='', flush=True)
+for chunk in stream:
+    print(chunk,end='',flush=True)
