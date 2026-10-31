@@ -1,12 +1,10 @@
 from langchain_core.chat_history import InMemoryChatMessageHistory
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 
-# 1.创建对象
 memory = InMemoryChatMessageHistory()
 
-# 2.添加消息
-memory.add_message(HumanMessage("你是谁?"))
-memory.add_message(AIMessage("我是AI。"))
+memory.add_message(AIMessage(content="我是ai"))
+memory.add_message(HumanMessage(content="请你回答1+34是多少"))
 
-# 3.获取消息列表
-print(memory.messages)
+
+print(memory)
